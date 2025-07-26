@@ -466,13 +466,12 @@
           echo "run=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_ENV
           echo "nightly_run=https://nightly.link/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_ENV
 
-          git clone --depth=1 https://github.com/TheSillyOk/sh
-          echo "sh_dir=$PWD/sh" >> $GITHUB_ENV
-          cp sh/extract_ksuver.sh $PWD
+          sh_dir="$PWD/sh"
+          git clone --depth=1 "https://github.com/TheSillyOk/sh" "$sh_dir"
+          echo "sh_dir=$sh_dir" >> $GITHUB_ENV
 
-          echo "KSUN_V=$(bash ./extract_ksuver.sh "https://github.com/KernelSU-Next/KernelSU-Next" "kernel/Makefile" "kernel" "next")" >> $GITHUB_ENV
-          echo "RKSU_V=$(bash ./extract_ksuver.sh "https://github.com/rsuntk/KernelSU" "kernel/Makefile" "kernel" "main")" >> $GITHUB_ENV
-          # echo "RKSU-SUSFS_V=$(bash ./extract_ksuver.sh "https://github.com/rsuntk/KernelSU" "kernel/Makefile" "kernel" "susfs-main")" >> $GITHUB_ENV
+          echo "KSUN_V=$(bash $sh_dir/get_ksuver.sh "KernelSU-Next" "KernelSU-Next" "next")" >> $GITHUB_ENV
+          echo "RKSU_V=$(bash $sh_dir/get_ksuver.sh "rsuntk" "KernelSU" "main")" >> $GITHUB_ENV
 
       - name: Set release body
         run: |
