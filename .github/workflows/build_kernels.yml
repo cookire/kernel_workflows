@@ -61,7 +61,7 @@ jobs:
             kernel_branch: "vic"
             tag: "NoName-VIC"
             python3_patch: true
-        build_type: ["Normal", "KSU", "RKSU", "KSUN"]
+        build_type: ["Normal", "RKSU", "KSUN"]
         susfs: [false, true]
         exclude:
           - build_type: "Normal"
