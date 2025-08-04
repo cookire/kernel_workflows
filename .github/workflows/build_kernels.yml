@@ -87,18 +87,6 @@ jobs:
           echo "python3=${{ matrix.kernel_config.python3_patch || 'false' }}" >> $GITHUB_ENV
           echo "in_dtbo=${{ matrix.kernel_config.IN_DTBO || 'none' }}" >> $GITHUB_ENV
 
-      - name: Maximize Build Space
-        uses: AdityaGarg8/remove-unwanted-software@v5
-        continue-on-error: true
-        with:
-          remove-dotnet: 'true'
-          remove-android: 'true'
-          remove-haskell: 'true'
-          remove-codeql: 'true'
-          remove-docker-images: 'true'
-          remove-large-packages: 'true'
-          remove-swapfile: 'true'
-
       - name: Initialize Workspace and Install Tools
         run: |
           echo "workspace_folder=${GITHUB_WORKSPACE}/workspace" >> $GITHUB_ENV
