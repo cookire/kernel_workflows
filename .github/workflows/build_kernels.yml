@@ -381,6 +381,7 @@ jobs:
             -d "parse_mode=Markdown" \
             --data-urlencode "text=
             • 🔔 ${{ env.tg_title }}
+            #ci\_${{ github.run_number }}
             🏷️ *Branch*: ${{ github.ref_name }}
             📌 *Tag*: ${{ env.TAG }}
             📆 *Released*: ${{ env.date }}
