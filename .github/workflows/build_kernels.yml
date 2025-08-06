@@ -269,7 +269,7 @@ jobs:
           echo "run_url=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_ENV
           echo "nightly_url=https://nightly.link/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_ENV
           
-          if [ -n "${{ inputs.scheduled_build }}" ]; then
+          if [ -n "${{ inputs.scheduled }}" ]; then
             title="A new scheduled build has been made. (SCHEDULED BUILD)"
           elif [ '${{ github.ref_name }}' == 'master' ]; then
             title="A new tag release has been made. (STABLE BUILD)"
@@ -328,7 +328,7 @@ jobs:
             echo "repo_dir=$PWD" >> $GITHUB_ENV
 
             if [ "${{ github.ref_type }}" != "tag" ]; then
-              if [[  "${{ github.ref_name }}" != "master" ]]; then
+              if [[  "${{ github.ref_name }}" != "master" || -n "${{ inputs.scheduled }}" ]]; then
                 TAG=$(date +"%Y/%m/%d")-test
                 gh release delete "$TAG" -y || true
               else
@@ -365,7 +365,7 @@ jobs:
           tag_name: ${{ env.TAG }}
           name: ${{ env.date }}
           body_path: release_body.md
-          prerelease: ${{ github.ref_name != 'master' }}
+          prerelease: ${{ github.ref_name != 'master' || 'inputs.scheduled' == 'true' }}
 
       - name: Upload Release Assets
         env:
