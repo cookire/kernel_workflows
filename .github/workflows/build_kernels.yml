@@ -365,7 +365,7 @@ jobs:
           tag_name: ${{ env.TAG }}
           name: ${{ env.date }}
           body_path: release_body.md
-          prerelease: ${{ github.ref_name != 'master' || 'inputs.scheduled' == 'true' }}
+          prerelease: ${{ endsWith(env.TAG, '-test') }}
 
       - name: Upload Release Assets
         env:
