@@ -294,9 +294,9 @@ jobs:
 
           Updated: ${{ env.date }}
 
-          [Updates](https://t.me/ok_kernel) • [Support](https://t.me/ok_kernel_chat) 
+          [Updates](https://t.me/ok_kernel) • [Support](https://t.me/ok_kernel_chat) • [Credits](https://github.com/${{ github.repository }}/tree/${{ github.ref_name }}?tab=readme-ov-file#credits)
 
-          [Github run](${{ env.run_url }}) • [Nightly run](${{ env.nightly_url }})
+          [Github run](${{ env.run_url }}) • [Nightly run](${{ env.nightly_url }}) • CI run n°${{ github.run_number }}
 
           [SUSFS Module](https://github.com/sidex15/ksu_module_susfs/releases)
 
@@ -308,9 +308,7 @@ jobs:
           -> Rissu's KernelSU  (\`RKSU\`): [${{ env.RKSU_V }}](${{ env.RKSU_URL }}) - SUSFS 1.5.9
           -> KernelSU Next (\`KSUN\`): [${{ env.KSUN_V }}](${{ env.KSUN_URL }}) - SUSFS 1.5.9
 
-          Credits:
-          • @Skyblueborb for helping in building the kernel & kernel source
-          • @aleeeee1 & @PowerX-NOT & @RainySorcerer for kernel sources
+          ### Unsure about which kernel to choose? [View the README.md file for recommendations](https://github.com/${{ github.repository }}/tree/${{ github.ref_name }}?tab=readme-ov-file#kernel-recommendations).
           EOF
 
       - name: Set release tag
