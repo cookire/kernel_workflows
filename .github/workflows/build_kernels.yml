@@ -2,20 +2,15 @@ name: Kernel Build
 
 on:
   workflow_dispatch:
-    inputs:
   workflow_call:
-    inputs:
-      scheduled:
-        description: 'Is it a scheduled build?'
-        required: true
-        type: boolean
-        default: true
   pull_request:
   push:
     paths-ignore:
       - 'README.md'
     branches:
       - test
+  schedule:
+   - cron: "0 12 * * *"
 
 jobs:
   build:
@@ -269,7 +264,7 @@ jobs:
           echo "run_url=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_ENV
           echo "nightly_url=https://nightly.link/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_ENV
           
-          if [ -n "${{ inputs.scheduled }}" ]; then
+          if [ '${{ github.event_name }}' == 'schedule' ]; then
             title="A new scheduled build has been made. (SCHEDULED BUILD)"
           elif [ '${{ github.ref_name }}' == 'master' ]; then
             title="A new tag release has been made. (STABLE BUILD)"
@@ -328,7 +323,7 @@ jobs:
             echo "repo_dir=$PWD" >> $GITHUB_ENV
 
             if [ "${{ github.ref_type }}" != "tag" ]; then
-              if [[  "${{ github.ref_name }}" != "master" || -n "${{ inputs.scheduled }}" ]]; then
+              if [[  "${{ github.ref_name }}" != "master" ||  "${{ github.event_name }}" == "schedule" ]]; then
                 TAG=$(date +"%Y/%m/%d")-test
                 gh release delete "$TAG" -y || true
               else
