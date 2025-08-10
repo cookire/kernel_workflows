@@ -152,6 +152,8 @@ jobs:
             KSUN)
               curl -LSs "https://raw.githubusercontent.com/rifsxd/KernelSU-Next/next/kernel/setup.sh" | bash -s next
               patch -p1 -F 3 -N < "${{ env.patches_dir }}/KSUN/syscall_hooks.patch"
+              cd KernelSU-Next
+              patch -p1 -F 3 -N < "${{ env.patches_dir }}/KSUN/WildJames-Manager.patch"
               ;;
             RKSU)
               curl -LSs "https://raw.githubusercontent.com/rsuntk/KernelSU/main/kernel/setup.sh" | bash -s main
@@ -161,6 +163,7 @@ jobs:
               ;;
           esac
 
+          cd ${{ env.kernel_folder }}
           sed -i -E 's/^CONFIG_(KPROBES|TMPFS_XATTR|KSU[^=]*)=(y|n)/# CONFIG_\1=\2/g' "arch/arm64/configs/${{ env.defconfig }}"
           echo -e "\nCONFIG_KPROBES=n\nCONFIG_KSU=y\nCONFIG_TMPFS_XATTR=y\n" >> "arch/arm64/configs/${{ env.defconfig }}"
 
