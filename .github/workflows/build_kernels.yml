@@ -79,9 +79,10 @@ jobs:
             repo: "SukiSU-Ultra/SukiSU-Ultra"
             branch: "nongki"
             kernel_patches: "manual_hooks.patch seccomp.patch"
-            extra_configs: "CONFIG_KPROBES_HOOK=n CONFIG_MANUAL_HOOK=y"
+            extra_configs: "CONFIG_KPROBES_HOOK=n CONFIG_MANUAL_HOOK=y CONFIG_KPM=y"
             susfs_patch: "SukiSU/SukiSU-SUSFS-1.5.9.patch"
             ak3_suffix: "-SukiSU"
+            kpm: "https://raw.githubusercontent.com/ShirkNeko/SukiSU_patch/refs/heads/main/kpm/patch_linux"
 
         susfs: [false, true]
         exclude:
@@ -114,7 +115,7 @@ jobs:
           echo "workspace_folder=${GITHUB_WORKSPACE}/workspace" >> $GITHUB_ENV
           mkdir -p "${GITHUB_WORKSPACE}/workspace"
           sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends python3-pip git zip unzip gcc g++ make ninja-build file bc bison flex libfl-dev libssl-dev libelf-dev wget build-essential python3-dev python3-setuptools rsync ccache llvm-dev libncurses6 libfdt-dev
+          sudo apt-get install -y --no-install-recommends python3-pip git zip unzip gcc g++ make ninja-build file bc bison flex libfl-dev libssl-dev libelf-dev wget build-essential python3-dev python3-setuptools rsync ccache llvm-dev libncurses6 libfdt-dev binwalk
 
       - name: Cache Clang
         uses: actions/cache@v4
@@ -238,9 +239,9 @@ jobs:
           export KBUILD_BUILD_USER="Ok"
           export KBUILD_BUILD_HOST="Github"
           export PATH="${{ env.workspace_folder }}/clang/bin:$PATH"
-          
+
           mkdir -p "out/arch/arm64/boot/dts/xiaomi/.ginkgo-trinket-overlay.dtbo.qcom-base"
-          
+
           make O=out ARCH=arm64 ${{ env.defconfig }} ${{ env.config }}
           make O=out DTC_PREBUILT=true DTC=$EXTRA_FOLDER/dtc DTC_OVERLAY_TEST_EXT=$EXTRA_FOLDER/ufdt_apply_overlay MKDTIMG=$EXTRA_FOLDER/mkdtimg CC="ccache clang" LD=ld.lld LLVM=1 LLVM_IAS=1 -j"$(nproc --all)" CROSS_COMPILE=aarch64-linux-gnu-
 
@@ -252,20 +253,46 @@ jobs:
           AK3_FOLDER="$BOOT_FOLDER/ak_folder"
           echo "ak_folder=$AK3_FOLDER" >> $GITHUB_ENV
           git clone --recursive --depth=1 "${{ env.anykernel_url }}" ${{ env.anykernel_branch_arg }} "$AK3_FOLDER"
-          
+
           cp -f "$BOOT_FOLDER/Image.gz-dtb" "$AK3_FOLDER" 2>/dev/null || cp -f "$BOOT_FOLDER/Image.gz" "$AK3_FOLDER"
-          
+
           if [ -e "$BOOT_FOLDER/dtbo.img" ]; then
             cp -f "$BOOT_FOLDER/dtbo.img" "$AK3_FOLDER"
           elif [ "${{ env.in_dtbo }}" != "none" ]; then
             python3 "${{ env.kernel_folder }}/extra/mkdtboimg.py" create "$AK3_FOLDER/dtbo.img" --custom0=0x00000000 --custom1=0x00000000 --page_size=4096 "${{ env.kernel_folder }}/${{ env.in_dtbo }}"
           fi
-          
+
+          if [[ -n "${{ matrix.build.kpm }}" ]]; then
+            cd "$AK3_FOLDER"
+            curl -LSs "${{ matrix.build.kpm }}" -o patch && chmod 777 patch
+            img_file=$(find . -type f -name "Image"* -maxdepth 1)
+            echo "$img_file"
+            if [[ "$img_file" == "./Image.gz"* ]]; then
+              dd if="$img_file" bs=1 | gunzip > Image || true
+              echo "-> Convert to: Image"
+            fi
+            ./patch && mv oImage Image
+            if [[ "$img_file" == "./Image.gz"* ]]; then
+              gzip -c Image > Image.gz
+              rm Image
+              echo "-> Compress: Image.gz"
+            fi
+            if [[ "$img_file" == "./Image.gz-dtb" ]]; then
+              compressed_length=$(dd if=Image.gz-dtb bs=1 $skip | gzip -c | wc -c)
+              dd if=Image.gz-dtb bs=1 skip=$compressed_length > dtb
+              cat Image.gz dtb > Image.gz-dtb
+              rm Image.gz && rm dtb
+              echo "-- Image.gz -> Image.gz-dtb"
+            fi
+            rm patch
+            cd -
+          fi
+
           BUILD_SUFFIX="${{ matrix.build.ak3_suffix }}"
           if [ "${{ matrix.susfs }}" == "true" ]; then
             BUILD_SUFFIX="$BUILD_SUFFIX.SUSFS"
           fi
-          
+
           ZIP_NAME="$(date +"%Y.%m.%d")-${{ env.device }}${BUILD_SUFFIX}-${{ matrix.kernel_config.tag }}-${{ github.run_number }}"
           echo "anykernel_zipname=$ZIP_NAME" >> $GITHUB_ENV
 
