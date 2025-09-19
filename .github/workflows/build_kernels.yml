@@ -61,7 +61,7 @@ jobs:
             branch: "next"
             ksu_patches: "KSUN/WildJames-Manager.patch"
             kernel_patches: "manual_hooks.patch seccomp.patch"
-            manual_hook_config: "KSU_KPROBES_HOOK=n"
+            extra_configs: "CONFIG_KSU_KPROBES_HOOK=n"
             susfs_patch: "KSUN/KSUN-SUSFS-1.5.9.patch"
             ak3_suffix: "-KSUNext"
 
@@ -70,7 +70,7 @@ jobs:
             repo: "rsuntk/KernelSU"
             branch: "main"
             kernel_patches: "get_cred_rcu.patch strncpy_from_user_nofault.patch manual_hooks.patch"
-            manual_hook_config: "KSU_MANUAL_HOOK=y"
+            extra_configs: "CONFIG_KSU_MANUAL_HOOK=y"
             susfs_patch: "RKSU/RKSU-SUSFS-1.5.9.patch"
             ak3_suffix: "-RKSU"
 
@@ -79,7 +79,7 @@ jobs:
             repo: "SukiSU-Ultra/SukiSU-Ultra"
             branch: "nongki"
             kernel_patches: "manual_hooks.patch seccomp.patch"
-            manual_hook_config: "CONFIG_KPROBES_HOOK=n"
+            extra_configs: "CONFIG_KPROBES_HOOK=n CONFIG_MANUAL_HOOK=y"
             susfs_patch: "SukiSU/SukiSU-SUSFS-1.5.9.patch"
             ak3_suffix: "-SukiSU"
 
@@ -192,7 +192,13 @@ jobs:
           cd ${{ env.kernel_folder }}
           sed -i -E 's/^CONFIG_(KPROBES|TMPFS_XATTR|KSU[^=]*)=(y|n)/# CONFIG_\1=\2/g' "arch/arm64/configs/${{ env.defconfig }}"
           echo -e "\nCONFIG_KPROBES=n\nCONFIG_KSU=y\nCONFIG_TMPFS_XATTR=y" >> "arch/arm64/configs/${{ env.defconfig }}"
-          echo "${{ matrix.build.manual_hook_config }}" >> "arch/arm64/configs/${{ env.defconfig }}"
+          
+          if [[ -n "${{ matrix.build.extra_configs }}" ]]; then
+            for config in ${{ matrix.build.extra_configs }}; do
+              echo "--> Added ${config} <--"
+              echo -e "\n${config}" >> "arch/arm64/configs/${{ env.defconfig }}"
+            done
+          fi
 
       - name: Apply SUSFS
         if: matrix.susfs
