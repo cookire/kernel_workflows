@@ -60,7 +60,7 @@ jobs:
             repo: "KernelSU-Next/KernelSU-Next"
             branch: "next"
             ksu_patches: "KSUN/WildJames-Manager.patch"
-            kernel_patches: "manual_hooks.patch seccomp.patch"
+            kernel_patches: "manual_hooks-v1.5.patch seccomp.patch"
             extra_configs: "CONFIG_KSU_KPROBES_HOOK=n"
             susfs_patch: "KSUN/KSUN-SUSFS-1.5.9.patch"
             ak3_suffix: "-KSUNext"
