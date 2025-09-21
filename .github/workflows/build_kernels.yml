@@ -58,7 +58,7 @@ jobs:
           - type: KSUN
             ksu: true
             repo: "KernelSU-Next/KernelSU-Next"
-            branch: "next"
+            branch: "v1.1.0"
             ksu_patches: "KSUN/WildJames-Manager.patch"
             kernel_patches: "manual_hooks-v1.5.patch seccomp.patch"
             extra_configs: "CONFIG_KSU_KPROBES_HOOK=n"
@@ -330,7 +330,7 @@ jobs:
           fi
           echo "tg_title=$title" >> $GITHUB_ENV
 
-          KSUN_URL=$(git ls-remote https://github.com/KernelSU-Next/KernelSU-Next.git HEAD | awk '{print "https://github.com/KernelSU-Next/KernelSU-Next/commit/"$1}')
+          KSUN_URL=$(git ls-remote https://github.com/KernelSU-Next/KernelSU-Next.git v1.1.0 | awk '{print "https://github.com/KernelSU-Next/KernelSU-Next/commit/"$1}')
           RKSU_URL=$(git ls-remote https://github.com/rsuntk/KernelSU HEAD | awk '{print "https://github.com/rsuntk/KernelSU/commit/"$1}')
           SUKI_URL=$(git ls-remote https://github.com/SukiSU-Ultra/SukiSU-Ultra nongki | awk '{print "https://github.com/SukiSU-Ultra/SukiSU-Ultra/commit/"$1}')
           echo "KSUN_URL=$KSUN_URL" >> $GITHUB_ENV
@@ -342,7 +342,8 @@ jobs:
           echo "sh_dir=$PWD/sh" >> $GITHUB_ENV
           echo "artifacts_dir=$PWD/downloaded-artifacts" >> $GITHUB_ENV
 
-          echo "KSUN_V=$(./sh/get_ksuver.sh "KernelSU-Next" "KernelSU-Next" "next")" >> $GITHUB_ENV
+          # echo "KSUN_V=$(./sh/get_ksuver.sh "KernelSU-Next" "KernelSU-Next" "next")" >> $GITHUB_ENV
+          echo "KSUN_V=12862" >> $GITHUB_ENV
           echo "RKSU_V=$(./sh/get_ksuver.sh "rsuntk" "KernelSU" "main")" >> $GITHUB_ENV
           echo "SUKI_V=$(./sh/extract_ksuver.sh "https://github.com/SukiSU-Ultra/SukiSU-Ultra" "kernel/Makefile" "." "nongki")" >> $GITHUB_ENV
 
