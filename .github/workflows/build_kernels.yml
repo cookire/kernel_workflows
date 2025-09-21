@@ -361,7 +361,7 @@ jobs:
           [SUSFS Module](https://github.com/sidex15/ksu_module_susfs/releases)
 
           KSU Managers:
-          -> Rissu's KernelSU (\`RKSU\`): [Manager](https://github.com/rsuntk/KernelSU/releases) / [Alternative](https://t.me/mksu_ci)
+          -> Rissu's KernelSU (\`RKSU\`): [Manager](https://github.com/rsuntk/KernelSU/releases) / [CI* channel](https://t.me/rsukrnlsu)
           -> KernelSU-Next (\`KSUN\`): [Releases](https://github.com/rifsxd/KernelSU-Next/releases) / [CI builds](https://t.me/ksunext_ci)
           -> SukiSU-Ultra (\`SUKI\`): [Releases](https://github.com/SukiSU-Ultra/SukiSU-Ultra/releases) / [CI builds](https://t.me/Sukiksu/7114/)
 
