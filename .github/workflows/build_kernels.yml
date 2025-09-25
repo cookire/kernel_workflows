@@ -62,7 +62,7 @@ jobs:
             ksu_patches: "KSUN/WildJames-Manager.patch"
             kernel_patches: "manual_hooks-v1.5.patch seccomp.patch"
             extra_configs: "CONFIG_KSU_KPROBES_HOOK=n"
-            susfs_patch: "KSUN/KSUN-SUSFS-1.5.9.patch"
+            susfs_patch: "KSUN/KSUN-SUSFS-1.5.10.patch"
             ak3_suffix: "-KSUNext"
 
           - type: RKSU
@@ -71,7 +71,7 @@ jobs:
             branch: "main"
             kernel_patches: "get_cred_rcu.patch strncpy_from_user_nofault.patch manual_hooks.patch"
             extra_configs: "CONFIG_KSU_MANUAL_HOOK=y"
-            susfs_patch: "RKSU/RKSU-SUSFS-1.5.9.patch"
+            susfs_patch: "RKSU/RKSU-SUSFS-1.5.10.patch"
             ak3_suffix: "-RKSU"
 
           - type: SukiSU
@@ -80,7 +80,7 @@ jobs:
             branch: "nongki"
             kernel_patches: "manual_hooks.patch seccomp.patch"
             extra_configs: "CONFIG_KPROBES_HOOK=n CONFIG_MANUAL_HOOK=y CONFIG_KPM=y"
-            susfs_patch: "SukiSU/SukiSU-SUSFS-1.5.9.patch"
+            susfs_patch: "SukiSU/SukiSU-SUSFS-1.5.10.patch"
             ak3_suffix: "-SukiSU"
             kpm: "https://raw.githubusercontent.com/ShirkNeko/SukiSU_patch/refs/heads/main/kpm/patch_linux"
 
@@ -219,7 +219,7 @@ jobs:
               patch -p1 -N < "$SUSFS_FOLDER/kernel_patches/KernelSU/10_enable_susfs_for_ksu.patch"
               ;;
             *)
-              patch -p1 -F 3 -N < "${{ env.patches_dir }}/susfs-1.5.9.patch" || true
+              patch -p1 -F 3 -N < "${{ env.patches_dir }}/susfs-1.5.10.patch" || true
               cd KernelSU*
               patch -p1 -N < "${{ env.patches_dir }}/${{ matrix.build.susfs_patch }}"
               ;;
@@ -367,9 +367,9 @@ jobs:
           -> SukiSU-Ultra (\`SUKI\`): [Releases](https://github.com/SukiSU-Ultra/SukiSU-Ultra/releases) / [CI builds](https://t.me/Sukiksu/7114/)
 
           Versions used for KernelSU variants & susfs:
-          -> Rissu's KernelSU  (\`RKSU\`): [${{ env.RKSU_V }}](${{ env.RKSU_URL }}) - SUSFS 1.5.9
-          -> KernelSU Next (\`KSUN\`): [${{ env.KSUN_V }}](${{ env.KSUN_URL }}) - SUSFS 1.5.9
-          -> SukiSU-Ultra (\`SUKI\`): [${{ env.SUKI_V }})](${{ env.SUKI_URL }}) - SUSFS 1.5.9
+          -> Rissu's KernelSU  (\`RKSU\`): [${{ env.RKSU_V }}](${{ env.RKSU_URL }}) - SUSFS 1.5.10
+          -> KernelSU Next (\`KSUN\`): [${{ env.KSUN_V }}](${{ env.KSUN_URL }}) - SUSFS 1.5.10
+          -> SukiSU-Ultra (\`SUKI\`): [${{ env.SUKI_V }})](${{ env.SUKI_URL }}) - SUSFS 1.5.10
 
           ### Unsure about which kernel to choose? [View the README.md file for recommendations](https://github.com/${{ github.repository }}/tree/${{ github.ref_name }}?tab=readme-ov-file#kernel-recommendations).
           EOF
