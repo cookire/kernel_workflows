@@ -41,7 +41,7 @@ This is the tag/kernel name, currently these are the tags:
 - NoName 18.1 -> NoName-18.1
 - NoName VIC -> NoName-VIC
 - NoName Snowflake -> Snowflake
-- SM6125 22.2 -> SM6125-22.2
+- SM6125 23.0 -> SM6125-23.0
 ### runNumber
 Simply the number of the github run, don't use this as a definitive versioning metric, always base yourself on the build date.
 
@@ -49,7 +49,7 @@ Simply the number of the github run, don't use this as a definitive versioning m
  - [NoName LOS 18.1](https://github.com/Mi-A3-laurel-sprout/kernel_xiaomi_XD/tree/lineage-18.1) • NON-RDP • A11-A14 QPR1
  - [NoName VIC](https://github.com/Mi-A3-laurel-sprout/kernel_xiaomi_XD/tree/vic) • RDP
  - [NoName Snowflake](https://github.com/liquidprjkt/snowflake_laurel_sprout) • NON-RDP
- - [SM6125 LOS 22.2](https://github.com/LineageOS/android_kernel_xiaomi_sm6125) • NON-RDP
+ - [SM6125 LOS 23.0](https://github.com/LineageOS/android_kernel_xiaomi_sm6125) • NON-RDP
 
 # Credits:
 
