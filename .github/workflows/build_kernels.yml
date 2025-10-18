@@ -19,37 +19,10 @@ jobs:
       fail-fast: false
       matrix:
         kernel_config:
-          - kernel_name: "SM6125"
-            kernel_url: "https://github.com/LineageOS/android_kernel_xiaomi_sm6125"
-            kernel_branch: "lineage-23.0"
-            anykernel_branch: "sm6125"
-            tag: "SM6125-23.0"
-            defconfig: "vendor/trinket-perf_defconfig"
-            config: "vendor/xiaomi-trinket.config vendor/laurel_sprout.config"
-            patches_folder: "sm6125"
-            IN_DTBO: "out/arch/arm64/boot/dts/xiaomi/laurel_sprout-trinket-overlay.dtbo"
-
-          - kernel_name: "SM6125 - Ginkgo"
-            device: Ginkgo
-            kernel_url: "https://github.com/LineageOS/android_kernel_xiaomi_sm6125"
-            kernel_branch: "lineage-23.0"
-            anykernel_branch: "ginkgo"
-            tag: "SM6125-23.0"
-            defconfig: "vendor/trinket-perf_defconfig"
-            config: "vendor/xiaomi-trinket.config vendor/ginkgo.config"
-            patches_folder: "sm6125"
-            IN_DTBO: "out/arch/arm64/boot/dts/xiaomi/ginkgo-trinket-overlay.dtbo"
-
-          - kernel_name: "N18.1"
-            kernel_url: "https://github.com/TheSillyOk/kernel_laurel_sprout"
-            kernel_branch: "lineage-18.1"
-            tag: "NoName-18.1"
-            python3_patch: true
-
-          - kernel_name: "N-VIC"
-            kernel_url: "https://github.com/TheSillyOk/kernel_laurel_sprout"
-            kernel_branch: "vic"
-            tag: "NoName-VIC"
+          - kernel_name: "Lineage"
+            kernel_url: "https://github.com/cookire/android_kernel_xiaomi_sdm845"
+            kernel_branch: "udc"
+            tag: "Lineage"
             python3_patch: true
 
         build:
@@ -61,30 +34,8 @@ jobs:
             ksu: true
             repo: "KernelSU-Next/KernelSU-Next"
             branch: "next"
-            ksu_patches: "KSUN/WildJames-Manager.patch"
-            kernel_patches: "manual_hooks.patch seccomp.patch"
-            extra_configs: "CONFIG_KSU_KPROBES_HOOK=n"
             susfs_patch: "KSUN/KSUN-SUSFS-1.5.12.patch"
             ak3_suffix: "-KSUNext"
-
-          - type: RKSU
-            ksu: true
-            repo: "rsuntk/KernelSU"
-            branch: "main"
-            kernel_patches: "get_cred_rcu.patch strncpy_from_user_nofault.patch manual_hooks.patch"
-            extra_configs: "CONFIG_KSU_MANUAL_HOOK=y"
-            susfs_patch: "RKSU/RKSU-SUSFS-1.5.12.patch"
-            ak3_suffix: "-RKSU"
-
-          - type: SukiSU
-            ksu: true
-            repo: "SukiSU-Ultra/SukiSU-Ultra"
-            branch: "nongki"
-            kernel_patches: "manual_hooks.patch seccomp.patch"
-            extra_configs: "CONFIG_KPROBES_HOOK=n CONFIG_MANUAL_HOOK=y CONFIG_KPM=y"
-            susfs_patch: "SukiSU/SukiSU-SUSFS-1.5.12.patch"
-            ak3_suffix: "-SukiSU"
-            kpm: "https://raw.githubusercontent.com/ShirkNeko/SukiSU_patch/refs/heads/main/kpm/patch_linux"
 
         susfs: [false, true]
         exclude:
@@ -107,8 +58,8 @@ jobs:
           echo "anykernel_url=${{ matrix.kernel_config.anykernel_url || 'https://github.com/TheSillyOk/anykernel' }}" >> $GITHUB_ENV
           echo "anykernel_branch_arg=${{ matrix.kernel_config.anykernel_branch && format('-b {0}', matrix.kernel_config.anykernel_branch) || '' }}" >> $GITHUB_ENV
           echo "kernel_branch_arg=${{ matrix.kernel_config.kernel_branch && format('-b {0}', matrix.kernel_config.kernel_branch) || '' }}" >> $GITHUB_ENV
-          echo "susfs_branch=${{ matrix.kernel_config.susfs_branch || 'kernel-4.14' }}" >> $GITHUB_ENV
-          echo "device=${{ matrix.kernel_config.device || 'MiA3' }}" >> $GITHUB_ENV
+          echo "susfs_branch=${{ matrix.kernel_config.susfs_branch || 'kernel-4.9' }}" >> $GITHUB_ENV
+          echo "device=${{ matrix.kernel_config.device || 'Mi8pro' }}" >> $GITHUB_ENV
           echo "python3=${{ matrix.kernel_config.python3_patch || 'false' }}" >> $GITHUB_ENV
           echo "in_dtbo=${{ matrix.kernel_config.IN_DTBO || 'none' }}" >> $GITHUB_ENV
 
@@ -333,8 +284,6 @@ jobs:
           echo "tg_title=$title" >> $GITHUB_ENV
 
           KSUN_URL=$(git ls-remote https://github.com/KernelSU-Next/KernelSU-Next.git HEAD | awk '{print "https://github.com/KernelSU-Next/KernelSU-Next/commit/"$1}')
-          RKSU_URL=$(git ls-remote https://github.com/rsuntk/KernelSU HEAD | awk '{print "https://github.com/rsuntk/KernelSU/commit/"$1}')
-          SUKI_URL=$(git ls-remote https://github.com/SukiSU-Ultra/SukiSU-Ultra nongki | awk '{print "https://github.com/SukiSU-Ultra/SukiSU-Ultra/commit/"$1}')
           echo "KSUN_URL=$KSUN_URL" >> $GITHUB_ENV
           echo "RKSU_URL=$RKSU_URL" >> $GITHUB_ENV
           echo "SUKI_URL=$SUKI_URL" >> $GITHUB_ENV
@@ -345,32 +294,26 @@ jobs:
           echo "artifacts_dir=$PWD/downloaded-artifacts" >> $GITHUB_ENV
 
           echo "KSUN_V=$(./sh/get_ksuver.sh "KernelSU-Next" "KernelSU-Next" "next")" >> $GITHUB_ENV
-          echo "RKSU_V=$(./sh/get_ksuver.sh "rsuntk" "KernelSU" "main")" >> $GITHUB_ENV
-          echo "SUKI_V=$(./sh/extract_ksuver.sh "https://github.com/SukiSU-Ultra/SukiSU-Ultra" "kernel/Makefile" "." "nongki")" >> $GITHUB_ENV
 
       - name: Generate Release Body
         id: release_body
         run: |
           cat << EOF > release_body.md
-          Kernels w/ KSU (and forks) + SUSFS by @TheSillyOk
+          Kernels w/ KSU + SUSFS by @J7ohn | @TheSillyOk
 
           Updated: ${{ env.date }}
 
-          [Updates](https://t.me/ok_kernel) • [Support](https://t.me/ok_kernel_chat) • [Credits](https://github.com/${{ github.repository }}/tree/${{ github.ref_name }}?tab=readme-ov-file#credits)
+          [Credits](https://github.com/${{ github.repository }}/tree/${{ github.ref_name }}?tab=readme-ov-file#credits)
 
           [Github run](${{ env.run_url }}) • [Nightly run](${{ env.nightly_url }}) • CI run n°${{ github.run_number }}
 
           [SUSFS Module](https://github.com/sidex15/ksu_module_susfs/releases)
 
           KSU Managers:
-          -> Rissu's KernelSU (\`RKSU\`): [Manager](https://github.com/rsuntk/KernelSU/releases) / [CI* channel](https://t.me/rsukrnlsu)
           -> KernelSU-Next (\`KSUN\`): [Releases](https://github.com/rifsxd/KernelSU-Next/releases) / [CI builds](https://t.me/ksunext_ci)
-          -> SukiSU-Ultra (\`SUKI\`): [Releases](https://github.com/SukiSU-Ultra/SukiSU-Ultra/releases) / [CI builds](https://t.me/Sukiksu/7114/)
 
           Versions used for KernelSU variants & susfs:
-          -> Rissu's KernelSU  (\`RKSU\`): [${{ env.RKSU_V }}](${{ env.RKSU_URL }}) - SUSFS 1.5.12
           -> KernelSU Next (\`KSUN\`): [${{ env.KSUN_V }}](${{ env.KSUN_URL }}) - SUSFS 1.5.12
-          -> SukiSU-Ultra (\`SUKI\`): [${{ env.SUKI_V }})](${{ env.SUKI_URL }}) - SUSFS 1.5.12
 
           ### Unsure about which kernel to choose? [View the README.md file for recommendations](https://github.com/${{ github.repository }}/tree/${{ github.ref_name }}?tab=readme-ov-file#kernel-recommendations).
           EOF
@@ -429,21 +372,3 @@ jobs:
          GH_TOKEN: ${{ github.token }}
         run: |
           bash ${{ env.sh_dir }}/upload-assets.sh "${{ env.TAG }}" "${{ env.repo_dir }}" "${{ env.artifacts_dir }}"
-
-      - name: Send Telegram Notification
-        if: always()
-        run: |
-          curl -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
-            -d "chat_id=@ok_kernel_ci" \
-            -d "parse_mode=Markdown" \
-            --data-urlencode "text=
-            • 🔔 ${{ env.tg_title }}
-            #ci\_${{ github.run_number }}
-            🏷️ *Branch*: ${{ github.ref_name }}
-            📌 *Tag*: ${{ env.TAG }}
-            📆 *Released*: ${{ env.date }}
-            [Release](https://github.com/${{ github.repository }}/releases/tag/${{ env.TAG }}) • [Workflow run](${{ env.run_url }}) • [Nightly](${{ env.nightly_url }})
-            
-            • KernelSU-Next (KSUN) [${{ env.KSUN_V }}](${{ env.KSUN_URL }})
-            • Rissu's KernelSU (RKSU) [${{ env.RKSU_V }}](${{ env.RKSU_URL }})
-            • SukiSU-Ultra (SUKI) [${{ env.SUKI_V }}](${{ env.SUKI_URL }})"
