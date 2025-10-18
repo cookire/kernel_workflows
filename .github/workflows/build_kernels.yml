@@ -50,7 +50,7 @@ jobs:
       - name: Set Environment Variables
         id: vars
         run: |
-          echo "defconfig=${{ matrix.kernel_config.defconfig || 'vendor/laurel_sprout-perf_defconfig' }}" >> $GITHUB_ENV
+          echo "defconfig=${{ matrix.kernel_config.defconfig || 'sdm845-perf_defconfig' }}" >> $GITHUB_ENV
           echo "config=${{ matrix.kernel_config.config }}" >> $GITHUB_ENV
           echo "patches_url=${{ matrix.kernel_config.patches_url || 'https://github.com/TheSillyOk/kernel_ls_patches' }}" >> $GITHUB_ENV
           echo "patches_branch_arg=${{ matrix.kernel_config.patches_branch && format('-b {0}', matrix.kernel_config.patches_branch) || '' }}" >> $GITHUB_ENV
