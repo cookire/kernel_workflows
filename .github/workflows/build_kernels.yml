@@ -195,7 +195,7 @@ jobs:
 
           mkdir -p "out/arch/arm64/boot/dts/xiaomi/.ginkgo-trinket-overlay.dtbo.qcom-base"
 
-          make O=out ARCH=arm64 ${{ env.defconfig }} ${{ env.config }}
+          make O=out ARCH=arm64 LD=ld.lld ${{ env.defconfig }} ${{ env.config }}
           make O=out DTC_PREBUILT=true DTC=$EXTRA_FOLDER/dtc DTC_OVERLAY_TEST_EXT=$EXTRA_FOLDER/ufdt_apply_overlay MKDTIMG=$EXTRA_FOLDER/mkdtimg CC="ccache clang" LD=ld.lld LLVM=1 LLVM_IAS=1 -j"$(nproc --all)" CROSS_COMPILE=aarch64-linux-gnu-
 
       - name: Create AnyKernel3 Zip
