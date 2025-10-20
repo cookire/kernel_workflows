@@ -23,7 +23,7 @@ jobs:
             kernel_url: "https://github.com/cookire/android_kernel_xiaomi_sdm845"
             kernel_branch: "udc"
             tag: "Lineage"
-            defconfig: "vendor/xiaomi/mi845_defconfig"
+            defconfig: "vendor/sdm845-perf_defconfig"
             config: "vendor/xiaomi/equuleus.config"
             python3_patch: true
 
