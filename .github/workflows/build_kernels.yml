@@ -43,7 +43,7 @@ jobs:
         exclude:
           - build:
               type: "Normal"
-            susfs: true
+            susfs: false
 
     permissions:
       contents: write
