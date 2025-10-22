@@ -1,3 +1,4 @@
+[![Kernel Build](https://github.com/cookire/kernel_workflows/actions/workflows/build_kernels.yml/badge.svg)](https://github.com/cookire/kernel_workflows/actions/workflows/build_kernels.yml)
 # Kernel recommendations:
 
 
