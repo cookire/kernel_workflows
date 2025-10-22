@@ -39,12 +39,6 @@ jobs:
             susfs_patch: "KSUN/KSUN-SUSFS-1.5.12.patch"
             ak3_suffix: "-KSUNext"
 
-        susfs: [false, true]
-        exclude:
-          - build:
-              type: "Normal"
-            susfs: false
-
     permissions:
       contents: write
 
@@ -60,7 +54,6 @@ jobs:
           echo "anykernel_url=${{ matrix.kernel_config.anykernel_url || 'https://github.com/TheSillyOk/anykernel' }}" >> $GITHUB_ENV
           echo "anykernel_branch_arg=${{ matrix.kernel_config.anykernel_branch && format('-b {0}', matrix.kernel_config.anykernel_branch) || '' }}" >> $GITHUB_ENV
           echo "kernel_branch_arg=${{ matrix.kernel_config.kernel_branch && format('-b {0}', matrix.kernel_config.kernel_branch) || '' }}" >> $GITHUB_ENV
-          echo "susfs_branch=${{ matrix.kernel_config.susfs_branch || 'kernel-4.9' }}" >> $GITHUB_ENV
           echo "device=${{ matrix.kernel_config.device || 'Mi8pro' }}" >> $GITHUB_ENV
           echo "python3=${{ matrix.kernel_config.python3_patch || 'false' }}" >> $GITHUB_ENV
           echo "in_dtbo=${{ matrix.kernel_config.IN_DTBO || 'none' }}" >> $GITHUB_ENV
@@ -156,29 +149,6 @@ jobs:
             done
           fi
 
-      - name: Apply SUSFS
-        if: matrix.susfs
-        working-directory: ${{ env.kernel_folder }}
-        run: |
-          set -e
-          SUSFS_FOLDER="${{ env.workspace_folder }}/susfs4ksu"
-          git clone --depth=1 https://gitlab.com/simonpunk/susfs4ksu.git -b "${{ env.susfs_branch }}" "$SUSFS_FOLDER"
-
-          case "${{ matrix.build.type }}" in
-            KSU)
-              patch -p1 -N < "$SUSFS_FOLDER/kernel_patches/50_add_susfs_in_${{ env.susfs_branch }}.patch" || true
-              patch -p1 -N < "${{ env.patches_dir }}/${{ env.patches_folder }}/fix_susfs_rejects.patch" || true
-              cp -r $SUSFS_FOLDER/kernel_patches/fs/* fs/
-              cp -r $SUSFS_FOLDER/kernel_patches/include/linux/* include/linux
-              cd KernelSU
-              patch -p1 -N < "$SUSFS_FOLDER/kernel_patches/KernelSU/10_enable_susfs_for_ksu.patch"
-              ;;
-            *)
-              patch -p1 -F 3 -N < "${{ env.patches_dir }}/susfs-1.5.12.patch" || true
-              cd KernelSU*
-              patch -p1 -N < "${{ env.patches_dir }}/${{ matrix.build.susfs_patch }}"
-              ;;
-          esac
 
       - name: Build Kernel
         working-directory: ${{ env.kernel_folder }}
