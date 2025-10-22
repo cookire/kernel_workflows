@@ -270,7 +270,7 @@ jobs:
         id: release_body
         run: |
           cat << EOF > release_body.md
-          Kernels w/ KSU + SUSFS by @J7ohn | @TheSillyOk
+          Kernels w/ KSU by tg@J7ohn | @TheSillyOk
 
           Updated: ${{ env.date }}
 
@@ -278,13 +278,11 @@ jobs:
 
           [Github run](${{ env.run_url }}) • [Nightly run](${{ env.nightly_url }}) • CI run n°${{ github.run_number }}
 
-          [SUSFS Module](https://github.com/sidex15/ksu_module_susfs/releases)
-
           KSU Managers:
           -> KernelSU-Next (\`KSUN\`): [Releases](https://github.com/rifsxd/KernelSU-Next/releases) / [CI builds](https://t.me/ksunext_ci)
 
-          Versions used for KernelSU variants & susfs:
-          -> KernelSU Next (\`KSUN\`): [${{ env.KSUN_V }}](${{ env.KSUN_URL }}) - SUSFS 1.5.12
+          Versions used for KernelSU variants:
+          -> KernelSU Next (\`KSUN\`): [${{ env.KSUN_V }}](${{ env.KSUN_URL }})
 
           ### Unsure about which kernel to choose? [View the README.md file for recommendations](https://github.com/${{ github.repository }}/tree/${{ github.ref_name }}?tab=readme-ov-file#kernel-recommendations).
           EOF
